@@ -4,5 +4,5 @@ var app = express();
 app.use(express.static('public/app'));
 app.use(express.static('public'));
 app.listen(80, function() {
-  console.log("Static Content server gestartet");
+  console.log("Static Content Server gestartet.");
 });
