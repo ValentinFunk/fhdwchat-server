@@ -23,7 +23,7 @@
 
   </head>
 
-  <body ng-app="chatApp" layout="column" layout-fill ng-controller="UserController as ul" ng-cloak >
+  <body ng-app="chatApp" layout="column" layout-fill ng-cloak >
     <!-- Add your site or application content here -->
     <header class="mar-bot-20">
       <md-toolbar>
@@ -33,8 +33,8 @@
       </md-toolbar>
     </header>
 
-    <div layout="row" layout-align="center start">
-      <md-content flex flex-gt-md="75" class="md-whiteframe-z1">
+    <div layout="row" layout-align="center start" ng-controller="AppController">
+      <md-content flex flex-gt-sm="75" class="md-whiteframe-z1">
         <div layout="row">
           <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="rooms-sidenav"
                       md-is-locked-open="$mdMedia('gt-md')">
@@ -44,13 +44,16 @@
               </h2>
             </md-toolbar>
             <md-content md-scroll-y layout="column" style="height: 330px">
-              <div layout="row" ng-repeat="room in rooms">
-                <md-button flex class="pad-bot-10 pad-top-10"
-                           ng-class="{'md-primary' : currentRoomName === room.$id}"
-                           ui-sref="main.room({roomName: room.$id})">{{room.$id}}
-                </md-button>
-              </div>
-
+              <md-list>
+                <md-subheader class="md-no-sticky">{{users.length + " Benutzer online."}}</md-subheader>
+                <md-divider ></md-divider>
+                <md-list-item class="md-1-line" ng-repeat="user in users track by $index">
+                 <div class="md-list-item-text" layout="column">
+                   <h5>{{user}}</h5>
+                 </div>
+                 <md-divider ></md-divider>
+               </md-list-item>
+             </md-list>
             </md-content>
           </md-sidenav>
           <div layout="column" class="w-100">
@@ -64,20 +67,18 @@
               </h2>
             </md-toolbar>
             <md-content md-scroll-y class="md-padding" style="height: 330px" scroll-glue>
-              <div ng-repeat="msg in messages" layout="column" class="mar-ver-5">
+              <div ng-repeat="msg in messages track by $index" layout="column" class="mar-ver-5">
                 <div layout="row" layout-align="start center">
                   <b>{{msg.username || '[anonymous]'}}</b>
-                  <small class="pad-lef-5" am-time-ago="msg.timestamp"></small>
                 </div>
                 <div>{{msg.message}}</div>
               </div>
             </md-content>
             <md-content class="md-padding" layout="column" novalidate>
-              <form name="messageForm" ng-submit="sendMessage(messageForm)">
+              <form name="messageForm" ng-submit="sendMessage(newMessageText)">
                 <md-input-container layout="row">
-                  <label>Message</label>
+                  <label>Nachricht</label>
                   <input tabindex="1"
-                         autofocus
                          class="w100"
                          ng-model="newMessageText"
                          ng-maxlength="500"
@@ -99,14 +100,53 @@
       </md-content>
     </div>
 
+    <script type="text/ng-template" id="changename.html">
+      <md-dialog aria-label="Please pick a nickname">
+        <form name="pickNickname" novalidate>
+          <md-toolbar>
+            <div class="md-toolbar-tools">
+              <h2>Benutzername auswählen</h2>
+            </div>
+          </md-toolbar>
+
+          <md-dialog-content>
+            <div class="md-dialog-content">
+              <md-input-container>
+                <label>Nickname</label>
+                <input name="nickname"
+                       autofocus
+                       style="min-width: 400px"
+                       ng-maxlength="20"
+                       required=""
+                       ng-model="nickname"/>
+
+                <div ng-if="pickNickname.nickname.$dirty"
+                     ng-messages="pickNickname.nickname.$error">
+                  <div ng-message="required">Name is required</div>
+                  <div ng-message="maxlength">The name can be up to 20 characters long</div>
+                </div>
+              </md-input-container>
+            </div>
+          </md-dialog-content>
+          <md-dialog-actions layout="row">
+             <md-button ng-click="mdDialog.hide(nickname)" style="margin-right:20px;" role="submit"
+             type="submit">
+               Use
+             </md-button>
+           </md-dialog-actions>
+        </form>
+      </md-dialog>
+    </script>
+
 
     <script src="../node_modules/angular/angular.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../node_modules/angular-animate/angular-animate.js"></script>
+    <script src="../node_modules/angular-messages/angular-messages.js"></script>
     <script src="../node_modules/angular-aria/angular-aria.js"></script>
     <script type="text/javascript" src="../node_modules/angular-material/angular-material.js"></script>
 
     <script src="./src/app.js"></script>
-
+    <script src="./src/socket.factory.js"></script>
   </body>
 </html>
