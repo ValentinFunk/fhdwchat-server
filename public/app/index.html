@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <title>Angular Material - Starter App</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="../node_modules/angular-material/angular-material.css"/>
+    <link rel="stylesheet" href="assets/app.css"/>
+
+    <style type="text/css">
+        /**
+         * Hide when Angular is not yet loaded and initialized
+         */
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+          display: none !important;
+        }
+    </style>
+
+  </head>
+
+  <body ng-app="starterApp" layout="column" layout-fill ng-controller="UserController as ul" ng-cloak >
+    <!-- Add your site or application content here -->
+    <header class="mar-bot-20">
+      <md-toolbar>
+        <h2 class="md-toolbar-tools" layout="row" layout-align="space-between">
+          <a style="color:white">FHDW Chat</a>
+        </h2>
+      </md-toolbar>
+    </header>
+
+    <div layout="row" layout-align="center start">
+      <md-content flex flex-gt-md="75" class="md-whiteframe-z1">
+        <div layout="row">
+          <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="rooms-sidenav"
+                      md-is-locked-open="$mdMedia('gt-md')">
+            <md-toolbar class="md-accent">
+              <h2 class="md-toolbar-tools" layout="row" layout-align="space-between">
+                <span>Users</span>
+              </h2>
+            </md-toolbar>
+            <md-content md-scroll-y layout="column" style="height: 330px">
+              <div layout="row" ng-repeat="room in rooms">
+                <md-button flex class="pad-bot-10 pad-top-10"
+                           ng-class="{'md-primary' : currentRoomName === room.$id}"
+                           ui-sref="main.room({roomName: room.$id})">{{room.$id}}
+                </md-button>
+              </div>
+
+            </md-content>
+          </md-sidenav>
+          <div layout="column" class="w-100">
+            <md-toolbar class="md-accent">
+              <h2 class="md-toolbar-tools" layout="row" layout-align="space-between">
+                <span style="color:white">
+                  <md-button aria-label="Toggle Menu" hide-gt-md ng-click="toogleUsers()">
+                    <md-icon  md-svg-icon="menu" ></md-icon>
+                  </md-button>
+                </span>
+              </h2>
+            </md-toolbar>
+            <md-content md-scroll-y class="md-padding" style="height: 330px" scroll-glue>
+              <div ng-repeat="msg in messages" layout="column" class="mar-ver-5">
+                <div layout="row" layout-align="start center">
+                  <b>{{msg.username || '[anonymous]'}}</b>
+                  <small class="pad-lef-5" am-time-ago="msg.timestamp"></small>
+                </div>
+                <div>{{msg.message}}</div>
+              </div>
+            </md-content>
+            <md-content class="md-padding" layout="column" novalidate>
+              <form name="messageForm" ng-submit="sendMessage(messageForm)">
+                <md-input-container layout="row">
+                  <label>Message</label>
+                  <input tabindex="1"
+                         autofocus
+                         class="w100"
+                         ng-model="newMessageText"
+                         ng-maxlength="500"
+                         name="newMessageText"/>
+                   <div ng-if="messageForm.newMessageText.$dirty" ng-messages="messageForm.newMessageText.$error" class="ng-scope ng-inactive" aria-live="assertive"> <!-- ngMessage: maxlength --> </div>
+                </md-input-container>
+                <div layout="row" layout-align="end">
+                  <md-button tabindex="2"
+                             class="md-primary"
+                             role="submit"
+                             type="submit"
+                             ng-disabled="messageForm.$invalid || !newMessageText">Send
+                  </md-button>
+                </div>
+              </form>
+            </md-content>
+          </div>
+        </div>
+      </md-content>
+    </div>
+
+
+    <script src="../node_modules/angular/angular.js"></script>
+    <script src="../node_modules/angular-animate/angular-animate.js"></script>
+    <script src="../node_modules/angular-aria/angular-aria.js"></script>
+    <script type="text/javascript" src="../node_modules/angular-material/angular-material.js"></script>
+
+    <script src="./src/users/Users.js"></script>
+    <script src="./src/users/UserController.js"></script>
+    <script src="./src/users/UserService.js"></script>
+
+    <script type="text/javascript">
+
+          angular
+              .module('starterApp', ['ngMaterial', 'users'])
+              .run(function($rootScope, $mdSidenav) {
+                $rootScope.toogleUsers = function( ){
+                  $mdSidenav('rooms-sidenav').toggle();
+                }
+              })
+              .config(function($mdThemingProvider, $mdIconProvider){
+
+                  $mdIconProvider
+                      .defaultIconSet("./assets/svg/avatars.svg", 128)
+                      .icon("menu"       , "./assets/svg/menu.svg"        , 24)
+                      .icon("share"      , "./assets/svg/share.svg"       , 24)
+                      .icon("google_plus", "./assets/svg/google_plus.svg" , 512)
+                      .icon("hangouts"   , "./assets/svg/hangouts.svg"    , 512)
+                      .icon("twitter"    , "./assets/svg/twitter.svg"     , 512)
+                      .icon("phone"      , "./assets/svg/phone.svg"       , 512);
+
+                      $mdThemingProvider.theme('default')
+                          .primaryPalette('green')
+                          .accentPalette('light-green');
+
+              });
+
+    </script>
+
+  </body>
+</html>
