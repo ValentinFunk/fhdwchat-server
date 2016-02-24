@@ -1,6 +1,4 @@
-var Server = require('socket.io');
-
-var io = new Server();
+var io = require('socket.io')();
 
 var users = {};
 
@@ -13,6 +11,8 @@ function getUsernames( ) {
 }
 
 io.on('connection', function(socket) {
+  console.log("Sombody connected");
+  
   socket.emit('channelinfo', getUsernames());
 
   socket.on('setname', function(username) {

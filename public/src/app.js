@@ -69,5 +69,4 @@ angular
   .then(function(name) {
     socket.emit('setname', name);
   });
-
 });

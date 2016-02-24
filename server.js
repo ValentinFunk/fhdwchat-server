@@ -5,7 +5,6 @@ var chat = require('./chat');
 
 var app = express();
 
-app.use(express.static('public/app'));
 app.use(express.static('public'));
 
 var server = http.createServer(app);
